@@ -28,7 +28,7 @@
         .top-bar { 
             background-color: var(--pusmendik-blue); 
             width: 100%; 
-            padding: 40px 20px 100px 20px; /* Padding bawah extra untuk overlap card */
+            padding: 40px 20px 100px 20px; 
             color: white;
         }
         
@@ -63,7 +63,7 @@
         /* Container Login */
         .login-container { 
             padding: 0 20px;
-            margin-top: -60px; /* Membuat card menumpuk di atas bagian biru */
+            margin-top: -60px; 
             flex: 1;
             display: flex;
             justify-content: center;
@@ -99,7 +99,7 @@
             text-align: left;
         }
 
-        .form-group i {
+        .form-group i.input-icon {
             position: absolute;
             left: 15px;
             top: 50%;
@@ -107,6 +107,21 @@
             font-style: normal;
             font-size: 1.1rem;
             color: #aaa;
+            z-index: 2;
+        }
+
+        /* Styling baru untuk toggle password */
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-style: normal;
+            font-size: 1rem;
+            color: #aaa;
+            z-index: 3;
+            user-select: none;
         }
 
         .form-control { 
@@ -114,8 +129,8 @@
             background-color: #f9f9f9;
             border: 1.5px solid #eee; 
             border-radius: 10px;
-            padding: 14px 15px 14px 45px; 
-            font-size: 16px; /* Penting: 16px mencegah auto-zoom di iPhone */
+            padding: 14px 45px 14px 45px; /* Padding kanan ditambah untuk tempat mata */
+            font-size: 16px; 
             outline: none; 
             transition: all 0.3s ease;
             color: var(--text-dark);
@@ -151,7 +166,6 @@
             color: #999;
         }
 
-        /* Responsif untuk layar sangat kecil */
         @media (max-width: 360px) {
             .header-text h1 { font-size: 1.1rem; }
             .login-card { padding: 25px 15px; }
@@ -177,12 +191,13 @@
             
             <form id="loginForm">
                 <div class="form-group">
-                    <i>👤</i>
+                    <i class="input-icon">👤</i>
                     <input type="text" class="form-control" placeholder="Username (NISN)" id="userIn" inputmode="numeric" autocomplete="username">
                 </div>
                 <div class="form-group">
-                    <i>🔒</i>
+                    <i class="input-icon">🔒</i>
                     <input type="password" class="form-control" placeholder="Password" id="passIn" autocomplete="current-password">
+                    <i class="toggle-password" onclick="togglePass()" id="eyeIcon">👁️</i>
                 </div>
                 <button type="button" class="btn-login" onclick="cekLogin()">MASUK</button>
             </form>
@@ -194,6 +209,20 @@
     </div>
 
     <script>
+        // Fungsi untuk Lihat/Sembunyi Password
+        function togglePass() {
+            const passField = document.getElementById('passIn');
+            const eyeIcon = document.getElementById('eyeIcon');
+            
+            if (passField.type === "password") {
+                passField.type = "text";
+                eyeIcon.innerText = "🙈"; // Ikon mata tertutup
+            } else {
+                passField.type = "password";
+                eyeIcon.innerText = "👁️"; // Ikon mata terbuka
+            }
+        }
+
         // Data Peserta Lengkap
         const database = [
             {nama: "ADILLA NINGRUM", hari: "29", bulan: "Maret", tahun: "2011", username: "0118485556", pass: "8492031*"},
@@ -236,20 +265,16 @@
                 return;
             }
 
-            // Cari user di database
             const user = database.find(d => d.username === u && d.pass === p);
             
             if(user) {
-                // Simpan data ke sessionStorage agar bisa diakses di halaman berikutnya
                 sessionStorage.setItem("user_login", JSON.stringify(user));
-                // Pindah ke halaman data diri
                 window.location.href = "datadiri.html";
             } else { 
                 alert("Username atau Password Salah! Periksa kembali NISN dan kode akses Anda."); 
             }
         }
 
-        // Fitur Enter untuk Login
         document.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 cekLogin();
