@@ -2,27 +2,26 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Konfirmasi Data - SMP Darut Tauhid</title>
     <style>
         :root { 
-            --pusmendik-blue: #3d79b8; 
-            --bg-gray: #f4f7f9; 
-            --primary-blue: #007bff; 
+            /* Variabel Warna Hijau Baru */
+            --primary-green: #28a745;   
+            --dark-green: #1e7e34;      
+            --light-green-bg: #eafaf1; 
+            --text-dark: #2c3e50;
         }
         
-        * { box-sizing: border-box; }
-
         body, html { 
             margin: 0; padding: 0; min-height: 100vh;
             font-family: 'Segoe UI', Tahoma, sans-serif; 
-            background-color: var(--bg-gray); 
+            background-color: var(--light-green-bg); 
         }
         
-        /* Header Background yang adaptif */
         .header-bg { 
-            background-color: var(--pusmendik-blue); 
-            height: 200px; 
+            background-color: var(--dark-green); 
+            height: 250px; 
             width: 100%;
             position: absolute;
             top: 0;
@@ -34,99 +33,75 @@
             z-index: 2;
             max-width: 1100px; 
             margin: 0 auto;
-            padding: 20px;
+            padding: 30px 20px;
         }
 
-        /* Top Navigation Responsif */
         .top-nav {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             color: white;
-            margin-bottom: 25px;
-            gap: 10px;
+            margin-bottom: 40px;
         }
 
-        .logo-section { display: flex; align-items: center; gap: 10px; }
-        .logo-section img { height: 35px; }
-        .logo-section h1 { margin: 0; font-size: 18px; letter-spacing: 1px; }
+        .logo-section { display: flex; align-items: center; gap: 12px; }
+        .logo-section img { height: 45px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
+        .logo-section h1 { margin: 0; font-size: 20px; letter-spacing: 1px; }
 
-        #userTop { 
-            font-size: 10px; 
-            text-align: right; 
-            background: rgba(0,0,0,0.1); 
-            padding: 5px 10px; 
-            border-radius: 20px;
-        }
-
-        /* Grid System: Menjadi 1 kolom di HP */
         .main-grid {
             display: grid;
-            grid-template-columns: 300px 1fr; 
-            gap: 20px;
+            grid-template-columns: 320px 1fr; 
+            gap: 25px;
             align-items: start;
         }
 
         .card { 
             background: white; 
-            padding: 20px; 
+            padding: 25px; 
             border-radius: 12px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08); 
+            box-sizing: border-box;
         }
 
-        /* Token Box Design */
-        .token-box { 
-            display: flex; 
-            flex-direction: row;
-            justify-content: space-between; 
-            align-items: center; 
-        }
-
-        .token-display {
-            font-size: 24px; 
-            font-weight: bold; 
-            letter-spacing: 2px; 
-            color: var(--pusmendik-blue);
-        }
-
+        .token-box { display: flex; justify-content: space-between; align-items: center; }
         .btn-refresh { 
-            background: var(--primary-blue); color: white; border: none; 
-            padding: 8px 15px; border-radius: 6px; cursor: pointer; font-size: 12px;
+            background: var(--primary-green); color: white; border: none; 
+            padding: 8px 18px; border-radius: 6px; cursor: pointer; font-weight: bold; 
+            transition: background 0.3s;
         }
+        .btn-refresh:hover { background: var(--dark-green); }
 
-        .card h2 { 
-            font-weight: 600; font-size: 17px; margin: 0 0 20px 0; 
-            border-bottom: 2px solid #f0f4f8; padding-bottom: 10px; color: #333;
-        }
-
-        .form-group { margin-bottom: 18px; }
-        .label { font-size: 10px; color: #999; font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 4px; }
-        .val-text { font-size: 15px; color: #333; font-weight: 500; border-bottom: 1px solid #f0f0f0; padding-bottom: 5px; display: block; min-height: 25px; }
+        .card h2 { font-weight: 600; font-size: 18px; color: var(--text-dark); margin: 0 0 25px 0; border-bottom: 2px solid var(--light-green-bg); padding-bottom: 15px; }
+        
+        .form-group { margin-bottom: 20px; }
+        .label { font-size: 11px; color: #7f8c8d; font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 5px; }
+        .val-text { font-size: 15px; color: #333; font-weight: 500; border-bottom: 1px solid #f0f0f0; padding-bottom: 5px; display: block; }
         
         input[type="text"], select {
-            width: 100%; border: 1.5px solid #eee; border-radius: 8px; padding: 12px;
-            font-size: 15px; outline: none; background: #fafafa; font-family: inherit;
+            width: 100%; border: none; border-bottom: 2px solid #ddd; padding: 10px 0;
+            font-size: 14px; outline: none; background: transparent; font-family: inherit;
             transition: border-color 0.3s;
         }
 
-        input[type="text"]:focus { border-color: var(--primary-blue); background: #fff; }
-
-        .dob-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 5px; }
-        
-        .btn-submit { 
-            width: 100%; background: var(--primary-blue); color: white; border: none; 
-            padding: 16px; border-radius: 10px; font-size: 16px; font-weight: bold; 
-            cursor: pointer; margin-top: 10px; box-shadow: 0 4px 10px rgba(0,123,255,0.3);
+        input[type="text"]:focus, select:focus {
+            border-bottom-color: var(--primary-green);
         }
 
-        /* RESPONSIVE BREAKPOINT */
+        .dob-row { display: flex; gap: 10px; margin-top: 5px; }
+        
+        .btn-submit { 
+            width: 100%; background: var(--primary-green); color: white; border: none; 
+            padding: 16px; border-radius: 8px; font-size: 16px; font-weight: bold; 
+            cursor: pointer; margin-top: 20px; transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
+        }
+
+        .btn-submit:hover { background: var(--dark-green); transform: translateY(-1px); }
+        .btn-submit:active { transform: translateY(0); }
+
         @media (max-width: 850px) {
             .main-grid { grid-template-columns: 1fr; }
-            .header-bg { height: 160px; }
+            .header-bg { height: 320px; }
             .wrapper { padding: 15px; }
-            .logo-section h1 { font-size: 16px; }
-            .top-nav { margin-bottom: 15px; }
-            .token-box { padding: 15px; }
         }
     </style>
 </head>
@@ -140,70 +115,70 @@
                 <img src="https://upload.wikimedia.org/wikipedia/commons/9/9c/Logo_of_Ministry_of_Education_and_Culture_of_Republic_of_Indonesia.svg" alt="Logo">
                 <div>
                     <h1>PUSMENDIK</h1>
-                    <div style="font-size: 10px; opacity: 0.8;">SIMULASI ANBK 2026</div>
+                    <div style="font-size: 11px; opacity: 0.9; font-weight: 300;">SIMULASI ANBK 2026</div>
                 </div>
             </div>
-            <div id="userTop"></div>
+            <div id="userTop" style="font-size: 12px; text-align: right; background: rgba(0,0,0,0.2); padding: 5px 12px; border-radius: 20px;"></div>
         </div>
 
         <div class="main-grid">
             <div class="card token-box">
                 <div>
-                    <div style="font-size: 12px; color: #888; font-weight: bold;">TOKEN :</div>
-                    <div id="tokenBox" class="token-display">------</div>
+                    <div style="font-size: 13px; color: #7f8c8d; font-weight: 600;">TOKEN ANDA:</div>
+                    <div id="tokenBox" style="font-size: 26px; font-weight: 800; color: var(--dark-green); letter-spacing: 2px;">------</div>
                 </div>
-                <button class="btn-refresh" onclick="generateToken()">REFRESH</button>
+                <button class="btn-refresh" onclick="generateToken()">Refresh</button>
             </div>
 
             <div class="card">
                 <h2>Konfirmasi Data Peserta</h2>
 
                 <div class="form-group">
-                    <label class="label">Kode NIK/NISN</label>
+                    <label class="label">Username / NISN</label>
                     <span class="val-text" id="nikDisplay"></span>
                 </div>
 
                 <div class="form-group">
-                    <label class="label">Nama Peserta</label>
+                    <label class="label">Nama Lengkap Siswa</label>
                     <span class="val-text" id="namaDisplay"></span>
                 </div>
 
                 <div class="form-group">
                     <label class="label">Jenis Kelamin</label>
                     <select>
-                        <option>Laki-Laki</option>
-                        <option>Perempuan</option>
+                        <option value="L">Laki-Laki</option>
+                        <option value="P">Perempuan</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label class="label">Mata Ujian</label>
+                    <label class="label">Mata Ujian Tersedia</label>
                     <select id="selMataUjian">
-                        <option value="literasi.html">Literasi TKA 2026</option>
-                        <option value="numerasi.html">Numerasi TKA 2026</option>
+                        <option value="literasi.html">Literasi Membaca - TKA 2026</option>
+                        <option value="numerasi.html">Numerasi Matematika - TKA 2026</option>
                     </select>
                 </div>
 
-                <div class="form-group">
-                    <label class="label">Ketikkan Nama Peserta</label>
-                    <input type="text" id="inputNamaCheck" placeholder="Masukkan Nama Sesuai Login" autocomplete="off">
+                <div class="form-group" style="background: var(--light-green-bg); padding: 15px; border-radius: 8px;">
+                    <label class="label" style="color: var(--dark-green);">Validasi Nama</label>
+                    <input type="text" id="inputNamaCheck" placeholder="Ketik ulang Nama Lengkap sesuai di atas" autocomplete="off">
                 </div>
 
                 <div class="form-group">
-                    <label class="label">Tanggal Lahir</label>
+                    <label class="label">Tanggal Lahir (Terdaftar)</label>
                     <div class="dob-row">
-                        <select id="selHari"></select>
-                        <select id="selBulan"></select>
-                        <select id="selTahun"></select>
+                        <select id="selHari" disabled style="color: #555;"></select>
+                        <select id="selBulan" disabled style="color: #555;"></select>
+                        <select id="selTahun" disabled style="color: #555;"></select>
                     </div>
                 </div>
 
-                <div class="form-group" style="margin-top: 25px; background: #eef5ff; padding: 15px; border-radius: 8px;">
-                    <label class="label" style="color: var(--pusmendik-blue);">Input Token</label>
-                    <input type="text" id="tokenInput" placeholder="Ketik token 6 digit" style="text-transform: uppercase; font-weight: bold; letter-spacing: 2px; text-align: center; border: 1px solid var(--pusmendik-blue);">
+                <div class="form-group" style="margin-top: 30px;">
+                    <label class="label" style="color: var(--primary-green);">Masukkan Token</label>
+                    <input type="text" id="tokenInput" placeholder="6 Digit Token" style="text-transform: uppercase; font-weight: 800; font-size: 18px; text-align: center; letter-spacing: 5px;">
                 </div>
 
-                <button class="btn-submit" onclick="validateAndGo()">SUBMIT</button>
+                <button class="btn-submit" onclick="validateAndGo()">KONFIRMASI & MULAI</button>
             </div>
         </div>
     </div>
@@ -217,11 +192,11 @@
                 return; 
             }
 
-            document.getElementById('userTop').innerText = dataSiswa.username + " - " + dataSiswa.nama;
+            document.getElementById('userTop').innerText = dataSiswa.username + " | " + dataSiswa.nama;
             document.getElementById('nikDisplay').innerText = dataSiswa.username;
             document.getElementById('namaDisplay').innerText = dataSiswa.nama;
 
-            // Mengisi opsi tanggal lahir (statik berdasarkan login)
+            // Menampilkan data lahir dari session
             document.getElementById('selHari').innerHTML = `<option>${dataSiswa.hari}</option>`;
             document.getElementById('selBulan').innerHTML = `<option>${dataSiswa.bulan}</option>`;
             document.getElementById('selTahun').innerHTML = `<option>${dataSiswa.tahun}</option>`;
@@ -241,25 +216,29 @@
             const targetPage = document.getElementById('selMataUjian').value;
 
             if (inputNama === "") {
-                alert("Harap ketikkan nama peserta!");
+                alert("Harap ketikkan nama Anda untuk validasi!");
                 return;
             }
 
             if (inputNama !== dataSiswa.nama.toUpperCase()) { 
-                alert("Nama yang diketik tidak sesuai dengan data login!"); 
+                alert("Nama yang Anda ketikkan tidak cocok dengan data sistem!"); 
                 return; 
             }
             
             if (inputToken !== tokenAsli) { 
-                alert("Token yang dimasukkan salah!"); 
+                alert("Token tidak valid atau sudah kedaluwarsa. Silakan periksa kembali."); 
                 return; 
             }
 
-            // Simpan info mapel yang dipilih ke session jika perlu
-            const selMapelText = document.getElementById('selMataUjian').options[document.getElementById('selMataUjian').selectedIndex].text;
-            sessionStorage.setItem("current_mapel", selMapelText);
+            // Animasi sederhana sebelum pindah
+            const btn = document.querySelector('.btn-submit');
+            btn.innerText = "Mempersiapkan Soal...";
+            btn.style.opacity = "0.7";
+            btn.disabled = true;
 
-            window.location.href = targetPage;
+            setTimeout(() => {
+                window.location.href = targetPage;
+            }, 1000);
         }
     </script>
 </body>
