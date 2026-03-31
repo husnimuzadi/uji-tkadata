@@ -6,21 +6,19 @@
     <title>Konfirmasi Data - SMP Darut Tauhid</title>
     <style>
         :root { 
-            /* Variabel Warna Hijau Baru */
-            --primary-green: #28a745;   
-            --dark-green: #1e7e34;      
-            --light-green-bg: #eafaf1; 
-            --text-dark: #2c3e50;
+            --pusmendik-blue: #3d79b8; 
+            --bg-gray: #f4f7f9; 
+            --primary-blue: #007bff; 
         }
         
         body, html { 
             margin: 0; padding: 0; min-height: 100vh;
             font-family: 'Segoe UI', Tahoma, sans-serif; 
-            background-color: var(--light-green-bg); 
+            background-color: var(--bg-gray); 
         }
         
         .header-bg { 
-            background-color: var(--dark-green); 
+            background-color: var(--pusmendik-blue); 
             height: 250px; 
             width: 100%;
             position: absolute;
@@ -44,7 +42,7 @@
         }
 
         .logo-section { display: flex; align-items: center; gap: 12px; }
-        .logo-section img { height: 45px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)); }
+        .logo-section img { height: 45px; }
         .logo-section h1 { margin: 0; font-size: 20px; letter-spacing: 1px; }
 
         .main-grid {
@@ -57,50 +55,37 @@
         .card { 
             background: white; 
             padding: 25px; 
-            border-radius: 12px; 
-            box-shadow: 0 8px 30px rgba(0,0,0,0.08); 
+            border-radius: 8px; 
+            box-shadow: 0 5px 25px rgba(0,0,0,0.15); 
             box-sizing: border-box;
         }
 
         .token-box { display: flex; justify-content: space-between; align-items: center; }
         .btn-refresh { 
-            background: var(--primary-green); color: white; border: none; 
-            padding: 8px 18px; border-radius: 6px; cursor: pointer; font-weight: bold; 
-            transition: background 0.3s;
+            background: var(--primary-blue); color: white; border: none; 
+            padding: 6px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; 
         }
-        .btn-refresh:hover { background: var(--dark-green); }
 
-        .card h2 { font-weight: 600; font-size: 18px; color: var(--text-dark); margin: 0 0 25px 0; border-bottom: 2px solid var(--light-green-bg); padding-bottom: 15px; }
-        
+        .card h2 { font-weight: 500; font-size: 18px; margin: 0 0 25px 0; border-bottom: 1px solid #eee; padding-bottom: 15px; }
         .form-group { margin-bottom: 20px; }
-        .label { font-size: 11px; color: #7f8c8d; font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 5px; }
+        .label { font-size: 11px; color: #999; font-weight: 600; text-transform: uppercase; display: block; margin-bottom: 5px; }
         .val-text { font-size: 15px; color: #333; font-weight: 500; border-bottom: 1px solid #f0f0f0; padding-bottom: 5px; display: block; }
         
         input[type="text"], select {
-            width: 100%; border: none; border-bottom: 2px solid #ddd; padding: 10px 0;
+            width: 100%; border: none; border-bottom: 1px solid #ccc; padding: 8px 0;
             font-size: 14px; outline: none; background: transparent; font-family: inherit;
-            transition: border-color 0.3s;
-        }
-
-        input[type="text"]:focus, select:focus {
-            border-bottom-color: var(--primary-green);
         }
 
         .dob-row { display: flex; gap: 10px; margin-top: 5px; }
-        
         .btn-submit { 
-            width: 100%; background: var(--primary-green); color: white; border: none; 
-            padding: 16px; border-radius: 8px; font-size: 16px; font-weight: bold; 
-            cursor: pointer; margin-top: 20px; transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
+            width: 100%; background: var(--primary-blue); color: white; border: none; 
+            padding: 14px; border-radius: 5px; font-size: 15px; font-weight: bold; 
+            cursor: pointer; margin-top: 20px;
         }
-
-        .btn-submit:hover { background: var(--dark-green); transform: translateY(-1px); }
-        .btn-submit:active { transform: translateY(0); }
 
         @media (max-width: 850px) {
             .main-grid { grid-template-columns: 1fr; }
-            .header-bg { height: 320px; }
+            .header-bg { height: 350px; }
             .wrapper { padding: 15px; }
         }
     </style>
@@ -115,70 +100,67 @@
                 <img src="https://upload.wikimedia.org/wikipedia/commons/9/9c/Logo_of_Ministry_of_Education_and_Culture_of_Republic_of_Indonesia.svg" alt="Logo">
                 <div>
                     <h1>PUSMENDIK</h1>
-                    <div style="font-size: 11px; opacity: 0.9; font-weight: 300;">SIMULASI ANBK 2026</div>
+                    <div style="font-size: 11px; opacity: 0.8;">APLIKASI ANBK</div>
                 </div>
             </div>
-            <div id="userTop" style="font-size: 12px; text-align: right; background: rgba(0,0,0,0.2); padding: 5px 12px; border-radius: 20px;"></div>
+            <div id="userTop" style="font-size: 11px; text-align: right;"></div>
         </div>
 
         <div class="main-grid">
             <div class="card token-box">
                 <div>
-                    <div style="font-size: 13px; color: #7f8c8d; font-weight: 600;">TOKEN ANDA:</div>
-                    <div id="tokenBox" style="font-size: 26px; font-weight: 800; color: var(--dark-green); letter-spacing: 2px;">------</div>
+                    <div style="font-size: 13px; color: #666;">Token :</div>
+                    <div id="tokenBox" style="font-size: 22px; font-weight: bold; letter-spacing: 1px;">------</div>
                 </div>
                 <button class="btn-refresh" onclick="generateToken()">Refresh</button>
             </div>
 
             <div class="card">
-                <h2>Konfirmasi Data Peserta</h2>
+                <h2>Konfirmasi data Peserta</h2>
 
                 <div class="form-group">
-                    <label class="label">Username / NISN</label>
+                    <label class="label">Kode NIK/NISN</label>
                     <span class="val-text" id="nikDisplay"></span>
                 </div>
 
                 <div class="form-group">
-                    <label class="label">Nama Lengkap Siswa</label>
+                    <label class="label">Nama Peserta</label>
                     <span class="val-text" id="namaDisplay"></span>
                 </div>
 
                 <div class="form-group">
                     <label class="label">Jenis Kelamin</label>
-                    <select>
-                        <option value="L">Laki-Laki</option>
-                        <option value="P">Perempuan</option>
-                    </select>
+                    <select><option>Laki-Laki</option><option>Perempuan</option></select>
                 </div>
 
                 <div class="form-group">
-                    <label class="label">Mata Ujian Tersedia</label>
+                    <label class="label">Mata Ujian</label>
                     <select id="selMataUjian">
-                        <option value="literasi.html">Literasi Membaca - TKA 2026</option>
-                        <option value="numerasi.html">Numerasi Matematika - TKA 2026</option>
+                        <option value="literasi.html">Literasi TKA 2026</option>
+                        <option value="numerasi.html">Numerasi TKA 2026</option>
                     </select>
                 </div>
 
-                <div class="form-group" style="background: var(--light-green-bg); padding: 15px; border-radius: 8px;">
-                    <label class="label" style="color: var(--dark-green);">Validasi Nama</label>
-                    <input type="text" id="inputNamaCheck" placeholder="Ketik ulang Nama Lengkap sesuai di atas" autocomplete="off">
+                <div class="form-group">
+                    <label class="label">Ketikkan Nama Peserta</label>
+                    <input type="text" id="inputNamaCheck" placeholder="Ketikkan Nama Lengkap" autocomplete="off">
                 </div>
 
                 <div class="form-group">
-                    <label class="label">Tanggal Lahir (Terdaftar)</label>
+                    <label class="label">Tanggal Lahir</label>
                     <div class="dob-row">
-                        <select id="selHari" disabled style="color: #555;"></select>
-                        <select id="selBulan" disabled style="color: #555;"></select>
-                        <select id="selTahun" disabled style="color: #555;"></select>
+                        <select id="selHari"></select>
+                        <select id="selBulan"></select>
+                        <select id="selTahun"></select>
                     </div>
                 </div>
 
                 <div class="form-group" style="margin-top: 30px;">
-                    <label class="label" style="color: var(--primary-green);">Masukkan Token</label>
-                    <input type="text" id="tokenInput" placeholder="6 Digit Token" style="text-transform: uppercase; font-weight: 800; font-size: 18px; text-align: center; letter-spacing: 5px;">
+                    <label class="label" style="color: var(--primary-blue);">Token</label>
+                    <input type="text" id="tokenInput" placeholder="Ketikkan token di sini" style="text-transform: uppercase; font-weight: bold; letter-spacing: 2px;">
                 </div>
 
-                <button class="btn-submit" onclick="validateAndGo()">KONFIRMASI & MULAI</button>
+                <button class="btn-submit" onclick="validateAndGo()">Submit</button>
             </div>
         </div>
     </div>
@@ -188,11 +170,12 @@
 
         window.onload = function() {
             if(!dataSiswa) { 
+                // Jika data tidak ada, lempar kembali ke login
                 window.location.href = "login.html"; 
                 return; 
             }
 
-            document.getElementById('userTop').innerText = dataSiswa.username + " | " + dataSiswa.nama;
+            document.getElementById('userTop').innerText = dataSiswa.username + " - " + dataSiswa.nama + " 🎓";
             document.getElementById('nikDisplay').innerText = dataSiswa.username;
             document.getElementById('namaDisplay').innerText = dataSiswa.nama;
 
@@ -213,32 +196,24 @@
             const inputNama = document.getElementById('inputNamaCheck').value.trim().toUpperCase();
             const inputToken = document.getElementById('tokenInput').value.trim().toUpperCase();
             const tokenAsli = document.getElementById('tokenBox').innerText;
+            
+            // Ambil URL tujuan dari value mata ujian yang dipilih
             const targetPage = document.getElementById('selMataUjian').value;
 
-            if (inputNama === "") {
-                alert("Harap ketikkan nama Anda untuk validasi!");
-                return;
-            }
-
+            // Validasi: Apakah nama yang diketik sama dengan nama login?
             if (inputNama !== dataSiswa.nama.toUpperCase()) { 
-                alert("Nama yang Anda ketikkan tidak cocok dengan data sistem!"); 
+                alert("Nama tidak sesuai!"); 
                 return; 
             }
             
+            // Validasi: Apakah token benar?
             if (inputToken !== tokenAsli) { 
-                alert("Token tidak valid atau sudah kedaluwarsa. Silakan periksa kembali."); 
+                alert("Token salah!"); 
                 return; 
             }
 
-            // Animasi sederhana sebelum pindah
-            const btn = document.querySelector('.btn-submit');
-            btn.innerText = "Mempersiapkan Soal...";
-            btn.style.opacity = "0.7";
-            btn.disabled = true;
-
-            setTimeout(() => {
-                window.location.href = targetPage;
-            }, 1000);
+            // Jika semua benar, alihkan ke halaman yang sesuai
+            window.location.href = targetPage;
         }
     </script>
 </body>
