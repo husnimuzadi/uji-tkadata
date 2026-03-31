@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Login - SMP Darut Tauhid</title>
     <style>
-        /* --- PERUBAHAN TEMA DI SINI --- */
         :root { 
-            --primary-green: #28a745;   /* Hijau Utama (Tombol, Focus) */
-            --dark-green: #1e7e34;      /* Hijau Gelap (Header Top Bar) */
-            --light-green-bg: #eafaf1; /* Hijau Sangat Muda (Background Halaman) */
-            --text-dark: #2c3e50;
+            --pusmendik-blue: #3d79b8; 
+            --bg-gray: #f0f4f7; 
+            --primary-blue: #007bff; 
+            --text-dark: #333;
         }
-        /* ----------------------------- */
         
         * { box-sizing: border-box; }
 
@@ -20,15 +18,15 @@
             margin: 0; 
             padding: 0;
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
-            background-color: var(--light-green-bg); /* Menggunakan bg hijau muda */
+            background-color: var(--bg-gray); 
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
         
-        /* Header Hijau */
+        /* Header Biru */
         .top-bar { 
-            background-color: var(--dark-green); /* Menggunakan hijau gelap */
+            background-color: var(--pusmendik-blue); 
             width: 100%; 
             padding: 40px 20px 100px 20px; /* Padding bawah extra untuk overlap card */
             color: white;
@@ -65,7 +63,7 @@
         /* Container Login */
         .login-container { 
             padding: 0 20px;
-            margin-top: -60px; /* Membuat card menumpuk di atas bagian hijau */
+            margin-top: -60px; /* Membuat card menumpuk di atas bagian biru */
             flex: 1;
             display: flex;
             justify-content: center;
@@ -78,7 +76,7 @@
             max-width: 400px; 
             padding: 35px 25px; 
             border-radius: 15px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); /* Shadow sedikit dihaluskan */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15); 
             text-align: center;
         }
 
@@ -124,15 +122,15 @@
         }
 
         .form-control:focus { 
-            border-color: var(--primary-green); /* Border focus jadi hijau */
+            border-color: var(--primary-blue); 
             background-color: #fff;
-            box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.1); /* Glow focus hijau */
+            box-shadow: 0 0 0 4px rgba(0,123,255,0.1);
         }
 
         .btn-login { 
             width: 100%; 
             padding: 15px; 
-            background-color: var(--primary-green); /* Tombol jadi hijau */
+            background-color: var(--primary-blue); 
             color: white; 
             border: none; 
             border-radius: 10px; 
@@ -141,10 +139,6 @@
             cursor: pointer; 
             margin-top: 10px;
             transition: background 0.3s, transform 0.1s;
-        }
-
-        .btn-login:hover {
-            background-color: var(--dark-green); /* Hover tombol jadi hijau gelap */
         }
 
         .btn-login:active {
@@ -190,7 +184,7 @@
                     <i>🔒</i>
                     <input type="password" class="form-control" placeholder="Password" id="passIn" autocomplete="current-password">
                 </div>
-                <button type="submit" class="btn-login">MASUK</button>
+                <button type="button" class="btn-login" onclick="cekLogin()">MASUK</button>
             </form>
 
             <div class="footer-info">
@@ -200,7 +194,7 @@
     </div>
 
     <script>
-        // Data Peserta Lengkap (Tetap sama)
+        // Data Peserta Lengkap
         const database = [
             {nama: "ADILLA NINGRUM", hari: "29", bulan: "Maret", tahun: "2011", username: "0118485556", pass: "8492031*"},
             {nama: "ADILLA ZUHROTUN NADHIVA", hari: "03", bulan: "November", tahun: "2010", username: "3107614841", pass: "5729184*"},
@@ -233,12 +227,6 @@
             {nama: "TANIA AZAZIA FITRIANI", hari: "12", bulan: "September", tahun: "2010", username: "3107751486", pass: "7042938*"}
         ];
 
-        // Menangani submit form
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault(); // Mencegah reload halaman
-            cekLogin();
-        });
-
         function cekLogin() {
             const u = document.getElementById('userIn').value.trim();
             const p = document.getElementById('passIn').value.trim();
@@ -254,12 +242,19 @@
             if(user) {
                 // Simpan data ke sessionStorage agar bisa diakses di halaman berikutnya
                 sessionStorage.setItem("user_login", JSON.stringify(user));
-                // Pindah ke halaman data diri (pastikan file ini ada)
+                // Pindah ke halaman data diri
                 window.location.href = "datadiri.html";
             } else { 
                 alert("Username atau Password Salah! Periksa kembali NISN dan kode akses Anda."); 
             }
         }
+
+        // Fitur Enter untuk Login
+        document.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                cekLogin();
+            }
+        });
     </script>
 </body>
 </html>
