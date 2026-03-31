@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SMP Darut Tauhid</title>
+    <style>
+        :root { 
+            --pusmendik-blue: #3d79b8; 
+            --bg-gray: #f4f7f9; 
+            --primary-blue: #007bff; 
+        }
+        
+        body, html { height: 100%; margin: 0; font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg-gray); display: flex; flex-direction: column; }
+        
+        /* Blue Header Section */
+        .top-bar { 
+            background-color: var(--pusmendik-blue); 
+            height: 220px; 
+            width: 100%; 
+            position: absolute; 
+            top: 0; 
+            z-index: 1; 
+            padding: 30px 50px; 
+            box-sizing: border-box; 
+        }
+        
+        .header-content { display: flex; align-items: center; color: white; gap: 20px; }
+        .header-content img { height: 60px; width: auto; border-radius: 5px; }
+        .header-content h1 { margin: 0; font-size: 24px; letter-spacing: 1px; }
+        .header-content p { margin: 5px 0 0 0; opacity: 0.9; font-size: 14px; }
+
+        /* Login Card Position */
+        .login-container { 
+            flex: 1; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            position: relative; 
+            z-index: 2; 
+            margin-top: 60px; 
+        }
+
+        .login-card { 
+            background: white; 
+            width: 100%; 
+            max-width: 400px; 
+            padding: 40px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            text-align: center;
+        }
+
+        .login-card h2 { margin-top: 0; color: #333; font-size: 22px; }
+        .login-card p { color: #777; font-size: 14px; margin-bottom: 30px; }
+
+        /* Rapi Input with Icons */
+        .form-group { 
+            position: relative; 
+            margin-bottom: 25px; 
+            text-align: left;
+        }
+
+        /* Styling Icon agar sejajar di kiri */
+        .form-group i {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-style: normal;
+            font-size: 18px;
+            color: #555;
+        }
+
+        .form-control { 
+            width: 100%; 
+            border: none; 
+            border-bottom: 1.5px solid #ccc; 
+            padding: 10px 10px 10px 35px; /* Memberi ruang untuk icon */
+            font-size: 15px; 
+            box-sizing: border-box; 
+            outline: none; 
+            background: transparent;
+            transition: all 0.3s ease;
+        }
+
+        /* Efek saat input aktif */
+        .form-control:focus { 
+            border-bottom-color: var(--primary-blue); 
+        }
+
+        .btn-login { 
+            width: 100%; 
+            padding: 12px; 
+            background-color: var(--primary-blue); 
+            color: white; 
+            border: none; 
+            border-radius: 25px; 
+            font-size: 16px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            margin-top: 15px;
+            transition: background 0.3s;
+        }
+
+        .btn-login:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="header-content">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/9/9c/Logo_of_Ministry_of_Education_and_Culture_of_Republic_of_Indonesia.svg" alt="Logo">
+            <div>
+                <h1>SMP DARUT TAUHID</h1>
+                <p>APLIKASI ANBK - Simulasi TKA 2026</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="login-container">
+        <div class="login-card">
+            <h2>Selamat Datang</h2>
+            <p>Silakan login menggunakan NISN dan password anda</p>
+            <form id="loginForm">
+                <div class="form-group">
+                    <i>👤</i>
+                    <input type="text" class="form-control" placeholder="Username (NISN)" id="userIn" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <i>🔒</i>
+                    <input type="password" class="form-control" placeholder="Password" id="passIn">
+                </div>
+                <button type="button" class="btn-login" onclick="cekLogin()">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Data Peserta [cite: 8, 26, 34]
+        const database = [
+            {nama: "ADILLA NINGRUM", hari: "29", bulan: "Maret", tahun: "2011", username: "0118485556", pass: "8492031*"},
+            {nama: "ADILLA ZUHROTUN NADHIVA", hari: "03", bulan: "November", tahun: "2010", username: "3107614841", pass: "5729184*"},
+            {nama: "AHMAD GIYAN ASROFI", hari: "20", bulan: "Oktober", tahun: "2010", username: "3101920131", pass: "9364027*"},
+            {nama: "ALIFA MAFAZA MAISYAROH", hari: "31", bulan: "Desember", tahun: "2010", username: "0108873769", pass: "7158302*"},
+            {nama: "DESY RISKI RAHAYU", hari: "05", bulan: "Desember", tahun: "2010", username: "0105652879", pass: "2846197*"},
+            {nama: "Earlene Jovita Adelia", hari: "03", bulan: "Desember", tahun: "2010", username: "0106514260", pass: "6039275*"},
+            {nama: "FAIQ MALIHAH", hari: "19", bulan: "Juni", tahun: "2010", username: "0105921189", pass: "9182746*"},
+            {nama: "FAIZATUN NI'AMA", hari: "25", bulan: "Februari", tahun: "2011", username: "3116121141", pass: "4528901*"},
+            {nama: "FATIMATUZ ZAHRAINI", hari: "29", bulan: "Juli", tahun: "2011", username: "0114186398", pass: "7301569*"},
+            {nama: "Firman Maulana", hari: "22", bulan: "Desember", tahun: "2010", username: "0101327882", pass: "8692413*"},
+            {nama: "GITHA NAFEEZA", hari: "31", bulan: "Oktober", tahun: "2010", username: "0101131547", pass: "5274038*"},
+            {nama: "Lailatul Azhariyyah", hari: "25", bulan: "Juni", tahun: "2010", username: "0103426574", pass: "1948372*"},
+            {nama: "LUTHFI NUR SYAH AL KHAFI", hari: "29", bulan: "Agustus", tahun: "2010", username: "0108896185", pass: "6829054*"},
+            {nama: "MAULANA ZIDAN", hari: "07", bulan: "April", tahun: "2011", username: "0115007020", pass: "3417628*"},
+            {nama: "Maywah Sherina Julyanita", hari: "10", bulan: "Juli", tahun: "2010", username: "0106566202", pass: "9054816*"},
+            {nama: "Mohammad Athoillah", hari: "03", bulan: "Juni", tahun: "2011", username: "0114426354", pass: "2736490*"},
+            {nama: "MUCHAMMAD ARDIANSYACH DANI PRAYOGA", hari: "09", bulan: "Juni", tahun: "2010", username: "0105553969", pass: "8145297*"},
+            {nama: "MUHAMMAD AMIRUL MUKMININ", hari: "20", bulan: "Desember", tahun: "2010", username: "0105680214", pass: "6902731*"},
+            {nama: "MUHAMMAD FARIS SAPUTRA", hari: "29", bulan: "September", tahun: "2010", username: "0108987235", pass: "4579182*"},
+            {nama: "MUHAMMAD HARIS MUBAROK", hari: "21", bulan: "Agustus", tahun: "2010", username: "3105638723", pass: "1287349*"},
+            {nama: "MUHAMMAD RAFA ADITYA", hari: "03", bulan: "November", tahun: "2010", username: "0115842320", pass: "7635204*"},
+            {nama: "NANDIN SEPTIANA PUTRI", hari: "13", bulan: "September", tahun: "2010", username: "0108054565", pass: "5401986*"},
+            {nama: "NIKMATUS SHOLIKHAH", hari: "16", bulan: "April", tahun: "2011", username: "0112419538", pass: "8973215*"},
+            {nama: "SAHRUL ALFAN ALAMSYAH", hari: "10", bulan: "Maret", tahun: "2011", username: "0119318830", pass: "2167093*"},
+            {nama: "SAIDATUL ALFIANA", hari: "14", bulan: "April", tahun: "2011", username: "0113609663", pass: "4758620*"},
+            {nama: "SHASKIA SHIROH VITA SANIA", hari: "22", bulan: "Februari", tahun: "2011", username: "0111821831", pass: "3095487*"},
+            {nama: "SYARIFUN NURIL ALVIN", hari: "21", bulan: "Agustus", tahun: "2010", username: "0103454365", pass: "6821475*"},
+            {nama: "TALITHA IFTINAH SAFI", hari: "05", bulan: "Januari", tahun: "2011", username: "0111283529", pass: "9518362*"},
+            {nama: "TANIA AZAZIA FITRIANI", hari: "12", bulan: "September", tahun: "2010", username: "3107751486", pass: "7042938*"}
+        ];
+
+        function cekLogin() {
+            const u = document.getElementById('userIn').value;
+            const p = document.getElementById('passIn').value;
+            
+            // Cari user di database [cite: 36]
+            const user = database.find(d => d.username === u && d.pass === p);
+            
+            if(user) {
+                // Simpan ke sessionStorage untuk dibawa ke halaman soal [cite: 36]
+                sessionStorage.setItem("user_login", JSON.stringify(user));
+                // Arahkan ke halaman data diri atau soal [cite: 36]
+                window.location.href = "datadiri.html";
+            } else { 
+                alert("Username atau Password Salah! Periksa kembali NISN dan kode akses Anda."); 
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi TKA - PUSMENDIK</title>
+    <style>
+        :root {
+            --pusmendik-blue: #3d79b8;
+            --darker-blue: #306194;
+            --text-gray: #666;
+            --white: #ffffff;
+            --border-reg: #ccc;
+        }
+
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--pusmendik-blue);
+            /* Efek titik-titik halus di background */
+            background-image: radial-gradient(circle, #4a8ad0 1px, transparent 1px);
+            background-size: 30px 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Login Card */
+        .login-card {
+            background: var(--white);
+            width: 100%;
+            max-width: 420px;
+            padding: 45px;
+            border-radius: 15px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+            box-sizing: border-box;
+            
+            /* PERBAIKAN UTAMA: Flexbox untuk memusatkan SEMUA konten di dalam kartu */
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Memastikan logo, teks, dan form berada di tengah secara horizontal */
+        }
+
+        /* Container Logo - Dipastikan simetris */
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .logo-tutwuri {
+            width: 70px; /* Ukuran proporsional sesuai gambar */
+            height: auto;
+            display: block;
+        }
+
+        .login-card h2 {
+            margin: 0;
+            font-size: 22px;
+            color: #333;
+            text-align: center;
+        }
+
+        .login-card p.subtitle {
+            font-size: 13px;
+            color: var(--text-gray);
+            margin: 10px 0 30px;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        /* Form styling - Diatur agar penuh mengisi lebar kartu */
+        form {
+            width: 100%;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: bold;
+            color: #444;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-reg);
+            border-radius: 6px;
+            font-size: 14px;
+            color: #555;
+            background-color: #fcfcfc;
+            box-sizing: border-box; /* Sangat penting agar padding tidak merusak lebar */
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--pusmendik-blue);
+            box-shadow: 0 0 0 3px rgba(61, 121, 184, 0.1);
+        }
+
+        /* Button styling */
+        .btn-mulai {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--pusmendik-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-mulai:hover {
+            background-color: var(--darker-blue);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <div class="logo-container">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/9/9c/Logo_of_Ministry_of_Education_and_Culture_of_Republic_of_Indonesia.svg" alt="Logo Tut Wuri Handayani" class="logo-tutwuri">
+        </div>
+
+        <h2>Simulasi TKA</h2>
+        <p class="subtitle">Pilih jenjang dan mata pelajaran untuk memulai simulasi</p>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label>📚 Jenjang Pendidikan:</label>
+                <select id="jenjang" class="form-control" required>
+                    <option value="SMP">SMP / MTs / Sederajat</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>📖 Jenis Mata Pelajaran:</label>
+                <select id="jenis" class="form-control" required>
+                    <option value="Wajib">Mata Pelajaran Wajib</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>📝 Mata Pelajaran:</label>
+                <select id="mapel" class="form-control" required>
+                    <option value="Literasi">Literasi TKA</option>
+                    <option value="Numerasi">Numerasi TKA</option>
+                </select>
+            </div>
+
+            <button type="button" class="btn-mulai" onclick="mulaiSimulasi()">
+                Mulai Simulasi
+            </button>
+        </form>
+    </div>
+
+    <script>
+        function mulaiSimulasi() {
+            // Animasi tombol loading sederhana
+            const btn = document.querySelector('.btn-mulai');
+            const mapelInput = document.getElementById('mapel').value;
+            
+            btn.innerHTML = "Memuat...";
+            btn.disabled = true;
+
+            // Simulasi jeda memuat sebelum pindah halaman
+            setTimeout(() => {
+                // Mengarahkan ke halaman utama ujian (index.html)
+                // Kita bisa mengirim parameter mapel via URL jika diperlukan nanti
+                window.location.href = "index.html"; 
+            }, 1000);
+        }
+    </script>
+
+</body>
+</html>

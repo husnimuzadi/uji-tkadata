@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CBT Literasi - SMP Darut Tauhid</title>
+    <style>
+        :root { --primary: #1a73e8; --success: #27ae60; --danger: #d93025; --bg: #e9ecef; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); margin: 0; padding: 0; }
+        header { background: #fff; padding: 12px 25px; border-bottom: 2px solid #ddd; display: flex; justify-content: space-between; align-items: center; }
+        .container { max-width: 800px; margin: 20px auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .result-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: #fff; padding: 40px; border-radius: 15px; text-align: left; width: 90%; max-width: 500px; }
+        .info-table { width: 100%; margin: 15px 0; border-collapse: collapse; }
+        .info-table td { padding: 8px 5px; border-bottom: 1px solid #eee; font-size: 14px; }
+        .score-box { background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: center; border: 1px solid #eee; margin-top: 20px; }
+        button { background: var(--success); color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div style="font-weight:bold;">👤 <span id="headerName">PESERTA</span></div>
+    <button style="background:var(--danger); width:auto;" onclick="window.location.href='login.html'">KELUAR</button>
+</header>
+
+<div class="container">
+    <h1 id="testTitle">Ujian Literasi TKA</h1>
+    <p>Selamat mengerjakan, <span id="studentName" style="font-weight:bold;"></span>!</p>
+    <hr>
+    <div id="quizContent">
+        </div>
+    <button onclick="finishQuiz()" style="background:var(--primary);">Kirim Jawaban</button>
+</div>
+
+<div id="resultModal" class="result-modal">
+    <div class="modal-content">
+        <h2 style="text-align:center; color: var(--primary);">Ujian Selesai!</h2>
+        <table class="info-table">
+            <tr><td><b>Nama Peserta</b></td><td id="resNama"></td></tr>
+            <tr><td><b>NISN</b></td><td id="resNISN"></td></tr>
+            <tr><td><b>Tanggal Lahir</b></td><td id="resTgl"></td></tr>
+        </table>
+        
+        <div class="score-box">
+            <p style="margin:0;">Skor Akhir Anda:</p>
+            <h1 id="scoreDisplay" style="color:var(--success); font-size:4em; margin:10px 0;">0</h1>
+            <p id="totalCorrect" style="font-weight:bold; color:#555;"></p>
+        </div>
+        
+        <button onclick="downloadHasilTxt()" style="background:var(--success);">📥 Download Hasil (.txt)</button>
+        <button onclick="window.location.href='login.html'" style="background:var(--primary);">Selesai</button>
+    </div>
+</div>
+
+<script>
+    const data = JSON.parse(sessionStorage.getItem("user_login"));
+    if(!data) window.location.href = "login.html";
+    document.getElementById('headerName').innerText = data.nama;
+    document.getElementById('studentName').innerText = data.nama;
+
+    // KUNCI JAWABAN (Sesuaikan dengan soal Mas Husni)
+    const allQuestions = [
+        {q: "Ide pokok bacaan 1...", options: ["A", "B", "C", "D"], correct: 1}, // Kunci B
+        {q: "Pernyataan yang tepat...", options: ["A", "B", "C", "D"], correct: 0}, // Kunci A
+        // Tambahkan sampai 40 soal
+    ];
+
+    // Dummy kunci jawaban sisa agar total 40 untuk testing
+    while(allQuestions.length < 40) {
+        allQuestions.push({q: "Soal Literasi...", options: ["A", "B", "C", "D"], correct: 0});
+    }
+
+    let userAnswers = new Array(40).fill(null);
+
+    // Fungsi simpan jawaban (panggil ini saat radio button diklik)
+    function saveAnswer(qIdx, ansIdx) {
+        userAnswers[qIdx] = ansIdx;
+    }
+
+    function finishQuiz() {
+        if(!confirm("Yakin ingin mengakhiri ujian?")) return;
+        
+        let scoreCount = 0;
+        userAnswers.forEach((ans, i) => {
+            if (ans !== null && ans === allQuestions[i].correct) {
+                scoreCount++;
+            }
+        });
+
+        // LOGIKA SKOR ASLI: 2,5 poin per soal
+        const finalScore = scoreCount * 2.5;
+
+        // ISI DATA KE MODAL
+        document.getElementById('resNama').innerText = ": " + data.nama;
+        document.getElementById('resNISN').innerText = ": " + data.username;
+        document.getElementById('resTgl').innerText = ": " + data.hari + " " + data.bulan + " " + data.tahun;
+        
+        // TAMPILKAN SKOR ASLI (Bukan 85 lagi)
+        document.getElementById('scoreDisplay').innerText = finalScore;
+        document.getElementById('totalCorrect').innerText = "Benar " + scoreCount + " dari 40 soal";
+        
+        document.getElementById('resultModal').style.display = 'flex';
+    }
+
+    function downloadHasilTxt() {
+        let scoreCount = 0;
+        userAnswers.forEach((ans, i) => { if (ans === allQuestions[i].correct) scoreCount++; });
+        
+        let txt = `HASIL UJIAN LITERASI - SMP DARUT TAUHID\n`;
+        txt += `Nama: ${data.nama}\nNISN: ${data.username}\nSkor: ${scoreCount * 2.5}\n`;
+        txt += `Benar: ${scoreCount} dari 40\n\nJawaban:\n`;
+        userAnswers.forEach((ans, i) => {
+            txt += `Soal ${i+1}: ${ans !== null ? String.fromCharCode(65 + ans) : "-"}\n`;
+        });
+        
+        const blob = new Blob([txt], {type: 'text/plain'});
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `Hasil_${data.username}.txt`;
+        link.click();
+    }
+</script>
+</body>
+</html>
