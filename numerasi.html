@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CBT Numerasi v2 - SMP Darut Tauhid</title>
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --success: #27ae60;
+            --danger: #d93025;
+            --warning: #f1c40f;
+            --bg-body: #f1f3f4;
+            --white: #ffffff;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-body); margin: 0; padding: 0; user-select: none; }
+        
+        header { background: var(--white); padding: 12px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #ddd; position: sticky; top: 0; z-index: 100; }
+        .user-info { display: flex; align-items: center; gap: 12px; font-weight: 600; font-size: 14px; color: #444; }
+
+        .main-wrapper { display: grid; grid-template-columns: 1fr 350px; gap: 20px; padding: 20px; max-width: 1300px; margin: auto; }
+        
+        .question-card { background: var(--white); border-radius: 8px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: none; border: 1px solid #dee2e6; }
+        .question-card.active { display: block; animation: fadeIn 0.3s; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .bacaan-box { background: #f8f9fa; padding: 20px; border-left: 5px solid var(--primary); border-radius: 4px; margin-bottom: 20px; font-size: 16px; line-height: 1.8; max-height: 300px; overflow-y: auto; color: #333; }
+        
+        .sidebar { position: sticky; top: 85px; height: fit-content; }
+        .timer-box { background: #fff3cd; padding: 15px; text-align: center; border-radius: 8px; font-size: 28px; font-weight: bold; border: 1px solid #ffeeba; margin-bottom: 15px; color: #856404; }
+        
+        .nav-card { background: var(--white); padding: 15px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .nav-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 15px; }
+        .nav-btn { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: bold; background: #fff; transition: 0.2s; }
+        
+        .nav-btn.answered { background: var(--success); color: white; border-color: var(--success); }
+        .nav-btn.doubt { background: var(--warning) !important; color: #000 !important; border-color: var(--warning) !important; }
+        .nav-btn.current { border: 3px solid var(--primary); box-shadow: inset 0 0 5px rgba(0,0,0,0.2); }
+
+        .option-item { border: 1px solid #ddd; border-radius: 6px; margin-bottom: 10px; transition: 0.2s; }
+        .option-item:hover { background: #f8f9fa; border-color: var(--primary); }
+        .option-item.selected { background: #e8f0fe; border-color: var(--primary); font-weight: 600; }
+        .option-item label { display: flex; align-items: center; padding: 12px; cursor: pointer; width: 100%; font-size: 15px; }
+        .option-item input { margin-right: 12px; transform: scale(1.2); }
+
+        .btn-action { padding: 10px 20px; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .btn-prev { background: #6c757d; color: white; }
+        .btn-next { background: var(--primary); color: white; }
+        .btn-doubt { background: var(--warning); color: #333; }
+        .btn-finish { background: var(--success); color: white; }
+        .btn-action:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .result-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: #fff; padding: 30px; border-radius: 12px; width: 90%; max-width: 450px; text-align: center; }
+        
+        @media (max-width: 900px) { .main-wrapper { grid-template-columns: 1fr; } .sidebar { position: static; } }
+    </style>
+</head>
+<body oncontextmenu="return false" onkeydown="return disableKeys(event)">
+
+<header>
+    <div class="user-info">
+        <div style="width:35px; height:35px; background:var(--primary); color:white; border-radius:50%; display:grid; place-items:center;">👤</div>
+        <span id="headerUserName">PESERTA</span> | Numerasi TKA 2026
+    </div>
+    <div style="color:var(--danger); font-weight:bold;">Pelanggaran: <span id="violationCount">0</span>/3</div>
+</header>
+
+<div class="main-wrapper">
+    <div class="content-area" id="questionArea"></div>
+
+    <div class="sidebar">
+        <div class="timer-box" id="timerDisplay">--:--</div>
+        <div class="nav-card">
+            <strong>Navigasi Soal</strong>
+            <div style="display: flex; gap: 10px; font-size: 10px; margin-top: 5px;">
+                <span><span style="display:inline-block; width:10px; height:10px; background:var(--success)"></span> Sudah</span>
+                <span><span style="display:inline-block; width:10px; height:10px; background:var(--warning)"></span> Ragu</span>
+                <span><span style="display:inline-block; width:10px; height:10px; border:1px solid #ccc"></span> Belum</span>
+            </div>
+            <div class="nav-grid" id="navGrid"></div>
+        </div>
+    </div>
+</div>
+
+<div id="resultModal" class="result-modal">
+    <div class="modal-content">
+        <h2 style="color: var(--primary);">Ujian Selesai!</h2>
+        <div style="text-align: left; margin: 15px 0; font-size: 14px; border-top: 1px solid #eee; padding-top: 10px;">
+            <p><b>Nama:</b> <span id="resNama"></span></p>
+            <p><b>NISN:</b> <span id="resNISN"></span></p>
+        </div>
+        <div style="background:#f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+            <p style="margin:0;">Skor Akhir:</p>
+            <h1 id="scoreDisplay" style="color:var(--success); font-size:4em; margin:10px 0;">0</h1>
+            <p id="totalCorrect" style="font-weight:bold; color:#555;"></p>
+        </div>
+        <button onclick="downloadHasilTxt()" style="width:100%; padding:12px; background:var(--success); color:white; border:none; border-radius:5px; cursor:pointer; font-weight:bold; margin-bottom:10px;">📥 Download Hasil (.txt)</button>
+        <button onclick="clearAndExit()" style="width:100%; padding:10px; background:var(--primary); color:white; border:none; border-radius:5px; cursor:pointer;">Kembali ke Login</button>
+    </div>
+</div>
+
+<script>
+    const STORAGE_KEY = "cbt_numerasi_v2_answers";
+    const DOUBT_KEY = "cbt_numerasi_v2_doubt";
+    const TIME_KEY = "cbt_numerasi_v2_time";
+
+    const userData = JSON.parse(sessionStorage.getItem("user_login")) || {nama: "Tamu", username: "000000"};
+    document.getElementById('headerUserName').innerText = userData.nama;
+
+    const bacaanData = [
+        "<b>Informasi 1: Usaha Jajanan Sekolah</b><br>Budi menjual dua jenis paket jajanan di kantin sekolah. Paket A berisi 2 bakso goreng dan 3 siomay seharga Rp 10.000. Paket B berisi 4 bakso goreng dan 1 siomay seharga Rp 12.000. Budi ingin menghitung modal dan keuntungan yang ia dapatkan setiap harinya.",
+        "<b>Informasi 2: Kolam Renang Baru</b><br>Sebuah sekolah memiliki kolam renang berbentuk balok dengan panjang 20 meter, lebar 10 meter, dan kedalaman rata-rata 1,5 meter. Kolam tersebut diisi air menggunakan pompa dengan debit 200 liter per menit. Pengelola ingin mengetahui waktu yang dibutuhkan untuk mengisi kolam hingga penuh.",
+        "<b>Informasi 3: Diskon Toko Alat Tulis</b><br>Toko 'Cerdas' memberikan diskon bertingkat. Untuk pembelian buku tulis, terdapat diskon 10% untuk minimal 10 buku. Jika membeli lebih dari 20 buku, diskon menjadi 15% untuk total harga. Harga normal satu buku tulis adalah Rp 5.000.",
+        "<b>Informasi 4: Statistik Nilai Siswa</b><br>Berikut adalah data nilai ujian matematika kelas 8: 70, 85, 90, 75, 80, 85, 95, 70, 80, 85. Guru ingin mengetahui rata-rata (mean), median, dan modus dari data tersebut untuk bahan evaluasi pengajaran."
+    ];
+
+    const allQuestions = [
+        // Paket Soal 1
+        {q: "Berapa harga 1 buah bakso goreng berdasarkan informasi Paket A dan B?", options: ["Rp 2.000", "Rp 2.500", "Rp 3.000", "Rp 1.500"], correct: 1},
+        {q: "Berapa harga 1 buah siomay?", options: ["Rp 1.000", "Rp 1.500", "Rp 2.000", "Rp 2.500"], correct: 1},
+        {q: "Jika seorang siswa ingin membeli 5 bakso goreng dan 5 siomay, berapa total yang harus dibayar?", options: ["Rp 15.000", "Rp 18.000", "Rp 20.000", "Rp 22.500"], correct: 2},
+        {q: "Berapa harga 10 bakso goreng?", options: ["Rp 25.000", "Rp 20.000", "Rp 30.000", "Rp 15.000"], correct: 0},
+        {q: "Paket mana yang lebih murah per itemnya?", options: ["Paket A", "Paket B", "Keduanya sama", "Tidak bisa ditentukan"], correct: 0},
+        {q: "Jika Budi menjual 20 Paket A dalam sehari, berapa total pendapatannya?", options: ["Rp 100.000", "Rp 200.000", "Rp 150.000", "Rp 250.000"], correct: 1},
+        {q: "Selisih harga antara 1 bakso goreng dan 1 siomay adalah...", options: ["Rp 500", "Rp 1.000", "Rp 1.500", "Rp 2.000"], correct: 1},
+        {q: "Harga 6 bakso goreng dan 2 siomay adalah...", options: ["Rp 15.000", "Rp 16.000", "Rp 18.000", "Rp 20.000"], correct: 2},
+        {q: "Jika harga bakso naik Rp 500, berapa harga Paket A sekarang?", options: ["Rp 10.000", "Rp 11.000", "Rp 12.000", "Rp 11.500"], correct: 1},
+        {q: "Model matematika yang tepat untuk Paket A (x=bakso, y=siomay) adalah...", options: ["2x + 3y = 10000", "3x + 2y = 10000", "2x - 3y = 10000", "5xy = 10000"], correct: 0},
+        
+        // Paket Soal 2
+        {q: "Berapa volume total kolam renang tersebut dalam meter kubik?", options: ["200 m³", "300 m³", "400 m³", "150 m³"], correct: 1},
+        {q: "Berapa volume kolam renang dalam satuan liter?", options: ["3.000 L", "30.000 L", "300.000 L", "3.000.000 L"], correct: 2},
+        {q: "Berapa menit waktu yang dibutuhkan untuk mengisi penuh kolam tersebut?", options: ["1.000 menit", "1.500 menit", "2.000 menit", "500 menit"], correct: 1},
+        {q: "Jika dikonversi ke jam, berapa lama waktu pengisian kolam tersebut?", options: ["20 Jam", "25 Jam", "30 Jam", "15 Jam"], correct: 1},
+        {q: "Jika kedalaman kolam diubah menjadi 2 meter, berapa volume barunya?", options: ["400 m³", "500 m³", "600 m³", "800 m³"], correct: 0},
+        {q: "Berapa luas permukaan bawah kolam tersebut?", options: ["20 m²", "100 m²", "200 m²", "40 m²"], correct: 2},
+        {q: "Jika pompa yang digunakan ada 2 buah (kapasitas sama), berapa lama waktu pengisiannya?", options: ["750 menit", "1.000 menit", "500 menit", "1.500 menit"], correct: 0},
+        {q: "Debit air 200 liter/menit setara dengan...", options: ["2 m³/menit", "0,2 m³/menit", "0,02 m³/menit", "20 m³/menit"], correct: 1},
+        {q: "Jika kolam hanya diisi setengahnya, berapa volumenya?", options: ["100.000 L", "150.000 L", "200.000 L", "75.000 L"], correct: 1},
+        {q: "Berapa keliling permukaan atas kolam renang tersebut?", options: ["30 m", "40 m", "50 m", "60 m"], correct: 3},
+
+        // Soal 21-40 dapat diteruskan dengan logika matematika serupa...
+        {q: "Berapa harga 12 buku tulis sebelum diskon?", options: ["Rp 50.000", "Rp 60.000", "Rp 70.000", "Rp 80.000"], correct: 1},
+        {q: "Berapa total harga 10 buku setelah diskon 10%?", options: ["Rp 45.000", "Rp 40.000", "Rp 50.000", "Rp 35.000"], correct: 0},
+        {q: "Berapa potongan harga jika membeli 25 buku tulis?", options: ["Rp 12.500", "Rp 15.000", "Rp 18.750", "Rp 20.000"], correct: 2},
+        {q: "Harga 30 buku tulis setelah diskon 15% adalah...", options: ["Rp 127.500", "Rp 130.000", "Rp 120.000", "Rp 150.000"], correct: 0},
+        {q: "Selisih harga per buku antara tanpa diskon dan diskon 15% adalah...", options: ["Rp 500", "Rp 750", "Rp 1.000", "Rp 250"], correct: 1},
+        {q: "Jika membawa uang Rp 100.000, berapa maksimal buku yang bisa dibeli (tanpa diskon)?", options: ["15", "18", "20", "25"], correct: 2},
+        {q: "Berapa rata-rata (mean) dari data nilai siswa?", options: ["80", "81,5", "82,5", "85"], correct: 1},
+        {q: "Berapa median dari data tersebut?", options: ["75", "80", "82,5", "85"], correct: 2},
+        {q: "Berapa modus dari data nilai tersebut?", options: ["70", "80", "85", "90"], correct: 2},
+        {q: "Berapa jumlah siswa yang mendapat nilai di atas rata-rata?", options: ["4 siswa", "5 siswa", "6 siswa", "7 siswa"], correct: 2},
+        {q: "Nilai tertinggi dari data tersebut adalah...", options: ["90", "95", "100", "85"], correct: 1},
+        {q: "Jangkauan (range) dari data nilai tersebut adalah...", options: ["20", "25", "30", "15"], correct: 1},
+        {q: "Berapa jumlah siswa yang nilainya di bawah 80?", options: ["2", "3", "4", "5"], correct: 2},
+        {q: "Jika satu siswa dengan nilai 100 bergabung, berapa rata-rata barunya?", options: ["83,1", "84,5", "85,2", "82,8"], correct: 0},
+        {q: "Perbandingan siswa nilai 70 dan nilai 85 adalah...", options: ["1:2", "2:3", "3:2", "1:3"], correct: 1},
+        {q: "Berapa total nilai seluruh siswa?", options: ["800", "815", "820", "825"], correct: 1},
+        {q: "Persentase siswa yang mendapat nilai 85 adalah...", options: ["20%", "30%", "40%", "10%"], correct: 1},
+        {q: "Jika KKM adalah 75, berapa banyak siswa yang lulus?", options: ["6", "7", "8", "9"], correct: 2},
+        {q: "Berapa banyak siswa yang ikut ujian berdasarkan data?", options: ["8", "9", "10", "12"], correct: 2},
+        {q: "Jika 10% buku rusak dari 100 buku, berapa buku yang bagus?", options: ["80", "85", "90", "95"], correct: 2}
+    ];
+
+    let userAnswers = JSON.parse(localStorage.getItem(STORAGE_KEY)) || new Array(allQuestions.length).fill(null);
+    let doubtStatus = JSON.parse(localStorage.getItem(DOUBT_KEY)) || new Array(allQuestions.length).fill(false);
+    let timeLeft = parseInt(localStorage.getItem(TIME_KEY)) || 3600;
+    let violations = 0;
+    let currentIdx = 0;
+
+    const questionArea = document.getElementById('questionArea');
+    const navGrid = document.getElementById('navGrid');
+
+    function init() {
+        allQuestions.forEach((item, index) => {
+            const bacaanIdx = Math.floor(index / 10);
+            const card = document.createElement('div');
+            card.className = `question-card ${index === 0 ? 'active' : ''}`;
+            card.id = `qcard-${index}`;
+            card.innerHTML = `
+                <div style="display:flex; justify-content:space-between; color:var(--primary); font-weight:bold; margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:5px;">
+                    <span>SOAL NOMOR ${index + 1}</span>
+                    <span>NUMERASI TKA</span>
+                </div>
+                <div class="bacaan-box">${bacaanData[bacaanIdx]}</div>
+                <p style="font-weight:600; font-size:1.1em; margin-bottom:15px;">${item.q}</p>
+                <div class="options-list">
+                    ${item.options.map((opt, i) => {
+                        const isChecked = userAnswers[index] === i ? 'checked' : '';
+                        const isSelectedClass = userAnswers[index] === i ? 'selected' : '';
+                        return `
+                        <div class="option-item ${isSelectedClass}" id="opt-container-${index}-${i}">
+                            <label>
+                                <input type="radio" name="q${index}" value="${i}" ${isChecked} onclick="saveAnswer(${index}, ${i})">
+                                ${String.fromCharCode(65 + i)}. ${opt}
+                            </label>
+                        </div>`;
+                    }).join('')}
+                </div>
+                <div style="margin-top:25px; display:flex; justify-content:space-between; gap:10px;">
+                    <button class="btn-action btn-prev" onclick="move(${index - 1})" ${index === 0 ? 'disabled' : ''}>KEMBALI</button>
+                    <button class="btn-action btn-doubt" onclick="toggleDoubt(${index})">RAGU-RAGU</button>
+                    ${index === allQuestions.length - 1 ? 
+                        `<button class="btn-action btn-finish" onclick="finishQuiz()">KIRIM JAWABAN</button>` :
+                        `<button class="btn-action btn-next" onclick="move(${index + 1})">BERIKUTNYA</button>`
+                    }
+                </div>
+            `;
+            questionArea.appendChild(card);
+
+            const navBtn = document.createElement('div');
+            navBtn.className = `nav-btn ${index === 0 ? 'current' : ''}`;
+            if (userAnswers[index] !== null) navBtn.classList.add('answered');
+            if (doubtStatus[index]) navBtn.classList.add('doubt');
+            navBtn.id = `nav-${index}`;
+            navBtn.innerText = index + 1;
+            navBtn.onclick = () => move(index);
+            navGrid.appendChild(navBtn);
+        });
+        startTimer();
+    }
+
+    function move(index) {
+        if (index < 0 || index >= allQuestions.length) return;
+        document.querySelectorAll('.question-card').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('current'));
+        document.getElementById(`qcard-${index}`).classList.add('active');
+        document.getElementById(`nav-${index}`).classList.add('current');
+        currentIdx = index;
+        window.scrollTo(0,0);
+    }
+
+    function saveAnswer(qIdx, ansIdx) {
+        userAnswers[qIdx] = ansIdx;
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(userAnswers));
+        document.querySelectorAll(`#qcard-${qIdx} .option-item`).forEach(el => el.classList.remove('selected'));
+        document.getElementById(`opt-container-${qIdx}-${ansIdx}`).classList.add('selected');
+        document.getElementById(`nav-${qIdx}`).classList.add('answered');
+    }
+
+    function toggleDoubt(qIdx) {
+        doubtStatus[qIdx] = !doubtStatus[qIdx];
+        localStorage.setItem(DOUBT_KEY, JSON.stringify(doubtStatus));
+        const navBtn = document.getElementById(`nav-${qIdx}`);
+        doubtStatus[qIdx] ? navBtn.classList.add('doubt') : navBtn.classList.remove('doubt');
+    }
+
+    function startTimer() {
+        const timerDisplay = document.getElementById('timerDisplay');
+        const timerInterval = setInterval(() => {
+            let m = Math.floor(timeLeft / 60);
+            let s = timeLeft % 60;
+            timerDisplay.innerText = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+            if (timeLeft <= 0) { clearInterval(timerInterval); finishQuiz(true); }
+            timeLeft--;
+            if(timeLeft % 5 === 0) localStorage.setItem(TIME_KEY, timeLeft);
+        }, 1000);
+    }
+
+    function finishQuiz(isAuto = false) {
+        const unanswered = userAnswers.filter(ans => ans === null).length;
+        if (!isAuto) {
+            let confirmMsg = "Apakah Anda yakin ingin mengakhiri ujian?";
+            if (unanswered > 0) confirmMsg = `Ada ${unanswered} soal belum dijawab. Tetap kirim?`;
+            if (!confirm(confirmMsg)) return;
+        }
+
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(DOUBT_KEY);
+        localStorage.removeItem(TIME_KEY);
+
+        let correctCount = 0;
+        userAnswers.forEach((ans, i) => {
+            if (ans !== null && parseInt(ans) === allQuestions[i].correct) correctCount++;
+        });
+
+        document.getElementById('resNama').innerText = userData.nama;
+        document.getElementById('resNISN').innerText = userData.username;
+        document.getElementById('scoreDisplay').innerText = correctCount * 2.5;
+        document.getElementById('totalCorrect').innerText = `Benar ${correctCount} dari 40 soal`;
+        document.getElementById('resultModal').style.display = 'flex';
+    }
+
+    function disableKeys(e) {
+        if (e.ctrlKey && (e.key === 'c' || e.key === 'v' || e.key === 'u' || e.key === 's') || e.keyCode === 123) {
+            alert("Fitur dilarang!"); return false;
+        }
+    }
+
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+            violations++;
+            document.getElementById('violationCount').innerText = violations;
+            alert(`PERINGATAN! (${violations}/3)`);
+            if (violations >= 3) finishQuiz(true);
+        }
+    });
+
+    function downloadHasilTxt() {
+        let correctCount = 0;
+        userAnswers.forEach((ans, i) => { if (ans !== null && parseInt(ans) === allQuestions[i].correct) correctCount++; });
+        let txt = `HASIL UJIAN NUMERASI - SMP DARUT TAUHID\nNama: ${userData.nama}\nSkor: ${correctCount * 2.5}\nBenar: ${correctCount}/40`;
+        const blob = new Blob([txt], {type: 'text/plain'});
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `Hasil_Numerasi_${userData.username}.txt`;
+        link.click();
+    }
+
+    function clearAndExit() {
+        localStorage.clear();
+        window.location.href = 'login.html';
+    }
+
+    window.onload = init;
+</script>
+</body>
+</html>
